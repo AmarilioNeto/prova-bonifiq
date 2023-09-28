@@ -5,11 +5,12 @@
 		int seed;
 		public RandomService()
 		{
-			seed = Guid.NewGuid().GetHashCode();
+			seed = 0;
 		}
 		public int GetRandom()
 		{
-			return new Random(seed).Next(100);
+			return new Random().Next(1000);		 
+			
 		}
 
 	}
