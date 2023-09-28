@@ -1,22 +1,30 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using ProvaPub.Models;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Data;
 
 namespace ProvaPub.Repository
 {
 
 	public class TestDbContext : DbContext
 	{
-		public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
+		private readonly IConfiguration Configuration;
+		public TestDbContext(IConfiguration configuration, DbContextOptions<TestDbContext> options) : base(options)
 		{
+			Configuration = configuration;
 		}
+		//public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
+		//{
+		//}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
-
 			modelBuilder.Entity<Customer>().HasData(getCustomerSeed());
 			modelBuilder.Entity<Product>().HasData(getProductSeed());
 		}
@@ -28,6 +36,7 @@ namespace ProvaPub.Repository
 			{
 				result.Add(new Customer()
 				{
+					// parei aqui fazendo a correção
 					 Id = i+1,
 					Name = new Faker().Person.FullName,
 				});
