@@ -1,21 +1,13 @@
-﻿using ProvaPub.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ProvaPub.Models;
 using ProvaPub.Repository;
 
 namespace ProvaPub.Services
 {
-	public class ProductService
+	public class ProductService:BaseService<Product>
 	{
-		//TestDbContext _ctx;
-		private readonly TestDbContext _ctx;
-
-		public ProductService(TestDbContext ctx)
+		public ProductService(TestDbContext ctx) : base(ctx)
 		{
-			_ctx = ctx;
-		}
-
-		public ProductList  ListProducts(int page)
-		{
-			return new ProductList() {  HasNext=false, TotalCount =10, Products = _ctx.Products.ToList() };
 		}
 
 	}

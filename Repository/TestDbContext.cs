@@ -18,9 +18,6 @@ namespace ProvaPub.Repository
 		{
 			Configuration = configuration;
 		}
-		//public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
-		//{
-		//}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -31,16 +28,17 @@ namespace ProvaPub.Repository
 
 		private Customer[] getCustomerSeed()
 		{
+			
 			List<Customer> result = new();
 			for (int i = 0; i < 20; i++)
 			{
 				result.Add(new Customer()
-				{
-					// parei aqui fazendo a correção
+				{				
 					 Id = i+1,
 					Name = new Faker().Person.FullName,
 				});
 			}
+			
 			return result.ToArray();
 		}
 		private Product[] getProductSeed()

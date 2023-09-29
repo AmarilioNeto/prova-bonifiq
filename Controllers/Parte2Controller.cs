@@ -31,14 +31,33 @@ namespace ProvaPub.Controllers
 
         [HttpGet("products")]
 		public ProductList ListProducts(int page)
-		{	
-			return _productService.ListProducts(page);
+		{
+		
+			int registrosPorPagina = 10;
+			var productList = _productService.ListEntities(page, registrosPorPagina);
+
+			return new ProductList()
+			{
+				HasNext = productList.Count > registrosPorPagina,
+				TotalCount = productList.Count,
+				Products = productList
+			};
+
 		}
+
 
 		[HttpGet("customers")]
 		public CustomerList ListCustomers(int page)
 		{
-				return _customerService.ListCustomers(page);
+			int registrosPorPagina = 10;
+		var customerList = _customerService.ListEntities(page, registrosPorPagina);
+			return new CustomerList()
+			{
+				HasNext = customerList.Count > registrosPorPagina,
+				TotalCount = customerList.Count,
+				Customers = customerList
+			};
 		}
+      
 	}
 }
