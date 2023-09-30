@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services;
+using ProvaPub.Services.PaymentForm;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,9 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<BaseService<Product>, ProductService>();
 builder.Services.AddScoped<BaseService<Customer>, CustomerService>();
-
+builder.Services.AddScoped<IProvedorPagamento, PaypalPayment>();
+builder.Services.AddScoped<IProvedorPagamento, CreditPayment>();
+builder.Services.AddScoped<IProvedorPagamento, PixPayment>();
 builder.Services.AddDbContext<TestDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ctx")));
 var app = builder.Build();

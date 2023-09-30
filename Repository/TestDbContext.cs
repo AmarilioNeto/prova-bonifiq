@@ -7,19 +7,23 @@ using System.Reflection.Emit;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using ProvaPub.Services;
 
 namespace ProvaPub.Repository
 {
 
 	public class TestDbContext : DbContext
 	{
+		// parei qui verificando dependecia cicular
 		private readonly IConfiguration Configuration;
-		public TestDbContext(IConfiguration configuration, DbContextOptions<TestDbContext> options) : base(options)
-		{
-			Configuration = configuration;
-		}
+		private readonly IProvedorPagamento _provedorPagamento;
+		public TestDbContext(IConfiguration configuration, DbContextOptions<TestDbContext> options, IProvedorPagamento provedorPagamento) : base(options)
+        {
+            Configuration = configuration;
+            _provedorPagamento = provedorPagamento;
+        }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.Entity<Customer>().HasData(getCustomerSeed());
@@ -54,6 +58,11 @@ namespace ProvaPub.Repository
 			}
 			return result.ToArray();
 		}
+		public OrderService CreateOrderService()
+		{
+			return new OrderService(_provedorPagamento);
+		}
+
 
 		public DbSet<Customer> Customers{ get; set; }
 		public DbSet<Product> Products{ get; set; }
