@@ -5,25 +5,17 @@ namespace ProvaPub.Services.PaymentForm
 {
     public class CreditPayment : IProvedorPagamento
     {
-        private readonly TestDbContext _dbContext;
         public CreditPayment()
         {
         }
-        public CreditPayment(TestDbContext dbContext)
+        public virtual async Task<Order> ProcessPayment(decimal paymentValue, int customerId)
         {
-            _dbContext = dbContext;
-        }
-        public async Task<Order> ProcessPayment(decimal paymentValue, int customerId)
-        {
-            var order = new Order
+            return await Task.FromResult(new Order()
             {
                 Value = paymentValue,
                 CustomerId = customerId,
-                OrderDate = DateTime.Now
-            };
-            _dbContext.Orders.Add(order);
-            await _dbContext.SaveChangesAsync();
-            return order;
+                OrderDate = DateTime.Now,
+            });
 
         }
     }

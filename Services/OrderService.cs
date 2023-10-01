@@ -19,22 +19,22 @@ namespace ProvaPub.Services
             IProvedorPagamento paymentProvider;
             if (paymentMethod == "pix")
             {
-                paymentProvider = new PixPayment();
+                //melhorar esse codigo para switch case e tentar implemntar enun
+                return await _provedorPagamento.ProcessPayment(paymentValue, customerId);
             }
             if(paymentMethod == "creditcard")
             {
-                paymentProvider = new CreditPayment();
+                return await _provedorPagamento.ProcessPayment(paymentValue, customerId);
             }
             if(paymentMethod == "paypal")
             {
-                paymentProvider = new PaypalPayment();
+                return await _provedorPagamento.ProcessPayment(paymentValue, customerId);
             }
             else
             {
                 throw new ArgumentException("Método de pagamento não encontrado");
             }
-            var orderService = new OrderService(paymentProvider);           
-            return await _provedorPagamento.ProcessPayment(paymentValue, customerId);
+            
 
         }
 

@@ -21,6 +21,8 @@ builder.Services.AddScoped<BaseService<Customer>, CustomerService>();
 builder.Services.AddScoped<IProvedorPagamento, PaypalPayment>();
 builder.Services.AddScoped<IProvedorPagamento, CreditPayment>();
 builder.Services.AddScoped<IProvedorPagamento, PixPayment>();
+builder.Services.AddScoped<OrderService>();
+
 builder.Services.AddDbContext<TestDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ctx")));
 var app = builder.Build();
