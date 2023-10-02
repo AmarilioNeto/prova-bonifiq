@@ -6,37 +6,43 @@ namespace ProvaPub.Services
 {
     public class OrderService
     {
-        private readonly IProvedorPagamento _provedorPagamento;
+        private readonly IProvedorPagamentoPix _provedorPagamentoPix;
+        private readonly IProvedorPagamentoCredit _provedorPagamentoCredit;
+        private readonly IProvedorPagamentoPaypal _provedorPagamentoPaypal;
 
-        public OrderService(IProvedorPagamento provedorPagamento)
+        public OrderService(IProvedorPagamentoPix provedorPagamentoPix, 
+                           IProvedorPagamentoCredit provedorPagamentoCredit,
+                           IProvedorPagamentoPaypal provedorPagamentoPaypal)
         {
-            _provedorPagamento = provedorPagamento;
+            _provedorPagamentoPix = provedorPagamentoPix;
+            _provedorPagamentoCredit = provedorPagamentoCredit;
+            _provedorPagamentoPaypal = provedorPagamentoPaypal;
         }
 
-        public async Task<Order> PayOrder(string paymentMethod, decimal paymentValue, int customerId)
+        public async Task<Order> PayOrder( string paymentMethod, decimal paymentValue, int customerId)
         {
 
-            IProvedorPagamento paymentProvider;
-            if (paymentMethod == "pix")
+            IProvedorPagamentoPix paymentProvider;
+
+            switch (paymentMethod.ToLower())
             {
-                //melhorar esse codigo para switch case e tentar implemntar enun
-                return await _provedorPagamento.ProcessPayment(paymentValue, customerId);
+                case "pix":
+                    return await _provedorPagamentoPix.ProcessPaymentPix(paymentValue, customerId);
+                    break;
+                case "creditcard":
+                    return await _provedorPagamentoCredit.ProcessPaymentCredit(paymentValue, customerId);
+                    break;
+                case "paypal":
+                    return await _provedorPagamentoPaypal.ProcessPaymentPayPal(paymentValue, customerId);
+                    break;
+                default:
+                    throw new ArgumentException("Método de pagamento não encontrado");
             }
-            if(paymentMethod == "creditcard")
-            {
-                return await _provedorPagamento.ProcessPayment(paymentValue, customerId);
-            }
-            if(paymentMethod == "paypal")
-            {
-                return await _provedorPagamento.ProcessPayment(paymentValue, customerId);
-            }
-            else
-            {
-                throw new ArgumentException("Método de pagamento não encontrado");
-            }
-            
+
+
 
         }
+
 
     }
 }

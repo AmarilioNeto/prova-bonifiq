@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using ProvaPub.Services;
+using ProvaPub.Services.PaymentForm;
 
 namespace ProvaPub.Repository
 {
@@ -16,11 +17,19 @@ namespace ProvaPub.Repository
 	{
 		// parei qui verificando dependecia cicular
 		private readonly IConfiguration Configuration;
-		private readonly IProvedorPagamento _provedorPagamento;
-		public TestDbContext(IConfiguration configuration, DbContextOptions<TestDbContext> options, IProvedorPagamento provedorPagamento) : base(options)
+		private readonly IProvedorPagamentoPix _provedorPagamentoPix;
+        private readonly IProvedorPagamentoPaypal _provedorPagamentoPaypal;
+        private readonly IProvedorPagamentoCredit _provedorPagamentoCredit;
+
+        public TestDbContext(IConfiguration configuration, DbContextOptions<TestDbContext> options, 
+			                 IProvedorPagamentoPix provedorPagamentoPix,
+							 IProvedorPagamentoPaypal provedorPagamentoPaypal,
+							 IProvedorPagamentoCredit provedorPagamentoCredit) : base(options)
         {
             Configuration = configuration;
-            _provedorPagamento = provedorPagamento;
+            _provedorPagamentoPix = provedorPagamentoPix;
+            _provedorPagamentoPaypal = provedorPagamentoPaypal;
+            _provedorPagamentoCredit = provedorPagamentoCredit;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -60,7 +69,9 @@ namespace ProvaPub.Repository
 		}
 		public OrderService CreateOrderService()
 		{
-			return new OrderService(_provedorPagamento);
+			return new OrderService(_provedorPagamentoPix, 
+				                   _provedorPagamentoCredit, 
+								   _provedorPagamentoPaypal);
 		}
 
 

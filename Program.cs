@@ -18,9 +18,9 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<BaseService<Product>, ProductService>();
 builder.Services.AddScoped<BaseService<Customer>, CustomerService>();
-builder.Services.AddScoped<IProvedorPagamento, PaypalPayment>();
-builder.Services.AddScoped<IProvedorPagamento, CreditPayment>();
-builder.Services.AddScoped<IProvedorPagamento, PixPayment>();
+builder.Services.AddScoped<IProvedorPagamentoPaypal, PaypalPayment>();
+builder.Services.AddScoped<IProvedorPagamentoCredit, CreditPayment>();
+builder.Services.AddScoped<IProvedorPagamentoPix, PixPayment>();
 builder.Services.AddScoped<OrderService>();
 
 builder.Services.AddDbContext<TestDbContext>(options =>
