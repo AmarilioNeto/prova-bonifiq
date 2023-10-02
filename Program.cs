@@ -24,7 +24,6 @@ builder.Services.AddScoped<IProvedorPagamentoCredit, CreditPayment>();
 builder.Services.AddScoped<IProvedorPagamentoPix, PixPayment>();
 builder.Services.AddScoped<OrderService>();
 
-
 builder.Services.AddDbContext<TestDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ctx")));
 var app = builder.Build();

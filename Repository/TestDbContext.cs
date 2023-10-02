@@ -1,15 +1,8 @@
 ﻿using Bogus;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using ProvaPub.Models;
-using System.Collections.Generic;
-using System.Reflection.Emit;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using System.Data;
 using ProvaPub.Services;
-using ProvaPub.Services.PaymentForm;
-using ProvaPub.Tests;
+
 
 
 namespace ProvaPub.Repository
@@ -17,7 +10,7 @@ namespace ProvaPub.Repository
 
     public class TestDbContext : DbContext
     {
-        // parei qui verificando dependecia cicular
+    
         private readonly IConfiguration Configuration;
         private readonly IProvedorPagamentoPix _provedorPagamentoPix;
         private readonly IProvedorPagamentoPaypal _provedorPagamentoPaypal;
@@ -31,7 +24,7 @@ namespace ProvaPub.Repository
                              IProvedorPagamentoPaypal provedorPagamentoPaypal,
                              IProvedorPagamentoCredit provedorPagamentoCredit) : base(options)
         {
-            Configuration = configuration;
+              Configuration = configuration;
             _provedorPagamentoPix = provedorPagamentoPix;
             _provedorPagamentoPaypal = provedorPagamentoPaypal;
             _provedorPagamentoCredit = provedorPagamentoCredit;        

@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
-using Moq;
 using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services;
 using Xunit;
-using System.Threading.Tasks;
-using System.Linq;
+
+
 
 namespace ProvaPub.Tests
 {
@@ -21,97 +19,122 @@ namespace ProvaPub.Tests
                 .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=Teste;Trusted_Connection=True;")
                 .Options;
         }
-
-        // parei aqui verificando se não tem mais possiveis casos de teste e tenedo melhorar e limpar o codigo  
-        [Fact]
-        public async Task ValidCustomerAndValue()
+        private (TestDbContext context, CustomerService service) CreateContextAndService()
         {
-  
-            using var context = new TestDbContext(_dbContextOptions);
+            var context = new TestDbContext(_dbContextOptions);
             var service = new CustomerService(context);
-            var customerId = 1;
+            return (context, service);
+        }
+
+        [Fact]
+        public async Task ClienteValorValidos_ReturnsTrue()
+        {
+            // Arrange
+            var (context, service) = CreateContextAndService();
+            var customerId = 7;
             var purchaseValue = 50;
-
+            // Act
             var result = await service.CanPurchase(customerId, purchaseValue);
+            // Assert
             Assert.True(result);
-
+            context.Dispose();
         }
         [Fact]
-        public async Task NonRegisteredCustomer()
+        public async Task ClienteNaoRegistrado_ThrowsException()
         {
-    
-            using var context = new TestDbContext(_dbContextOptions);
-            var service = new CustomerService(context);
-            var customerId = 999; 
+            // Arrange
+            var (context, service) = CreateContextAndService();
+            var customerId = 999;
             var purchaseValue = 50;
-
+            // Act and Assert
             await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 await service.CanPurchase(customerId, purchaseValue);
-            });
+            });        
+            context.Dispose();
         }
         [Fact]
-        public async Task MultiplePurchasesInOneMonth()
+        public async Task VariasComprasNoMes_ReturnsFalse()
         {
-
-            using var context = new TestDbContext(_dbContextOptions);
-            var service = new CustomerService(context);
-            var customerId = 1;
-            var lastMonthOrder = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow.AddMonths(-1) };
-            context.Orders.Add(lastMonthOrder);
-            await context.SaveChangesAsync();
-
+            // Arrange
+            var (context, service) = CreateContextAndService();
+            var customerId = 11;
+            var lastMonthOrder1 = new Order
+            {
+                CustomerId = customerId,
+                OrderDate = DateTime.Now
+            };
+            var lastMonthOrder2 = new Order
+            {
+                CustomerId = customerId,
+                OrderDate = DateTime.Now
+            };
+            context.Orders.AddRange(lastMonthOrder1, lastMonthOrder2);
+            var test = await context.SaveChangesAsync();
             var purchaseValue = 50;
 
+            //Act
             var result = await service.CanPurchase(customerId, purchaseValue);
-    
+
+            //Assert
             Assert.False(result);
+            context.Dispose();
         }
 
-        [Fact]
-        public async Task FirstTimeCustomerExceedsMaximum()
-        {
-          
-            using var context = new TestDbContext(_dbContextOptions);
-            var service = new CustomerService(context);
-            var customerId = 2;
 
+        [Fact]
+        public async Task ClientePelaPrimeiraVezExcedeMaximo_ReturnsFalse()
+        {
+
+            // Arrange
+            var (context, service) = CreateContextAndService();
+            var customerId = 2;
             var purchaseValue = 150;
 
+            //Act
             var result = await service.CanPurchase(customerId, purchaseValue);
 
+            //Assert
             Assert.False(result);
+            context.Dispose();
         }
         [Fact]
-        public async Task FirstTimeCustomerWithinMaximum()
+        public async Task ClienteCompraPelaPrimeiraVezDentroMaximo_ReturnsTrue()
         {
- 
-            using var context = new TestDbContext(_dbContextOptions);
-            var service = new CustomerService(context);
+            // Arrange
+            var (context, service) = CreateContextAndService();
             var customerId = 3;
-
             var purchaseValue = 50;
 
+            //Act
             var result = await service.CanPurchase(customerId, purchaseValue);
 
+            //Assert
             Assert.True(result);
+            context.Dispose();
         }
         [Fact]
-        public async Task CustomerWithPreviousPurchaseWithinMaximum()
+        public async Task ClienteComCompraAnteriorDentroMáximo_ReturnsTrue()
         {
+            // Arrange
+            var (context, service) = CreateContextAndService();
+            var customerId = 15;
+            var purchaseValue = 100;
 
-            using var context = new TestDbContext(_dbContextOptions);
-            var service = new CustomerService(context);
-            var customerId = 4;
-
-            var previousOrder = new Order { CustomerId = customerId, OrderDate = DateTime.UtcNow.AddMonths(-2) };
+            var previousOrder = new Order
+            {
+                CustomerId = customerId,
+                OrderDate = DateTime.UtcNow.AddMonths(-2)
+            };
             context.Orders.Add(previousOrder);
             await context.SaveChangesAsync();
 
-            var purchaseValue = 80;
+            //Act
             var result = await service.CanPurchase(customerId, purchaseValue);
 
+            //Assert
             Assert.True(result);
+            context.Dispose();
         }
     }
 }

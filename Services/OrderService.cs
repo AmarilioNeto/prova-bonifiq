@@ -1,6 +1,6 @@
 ﻿using ProvaPub.Models;
 using ProvaPub.Repository;
-using ProvaPub.Services.PaymentForm;
+
 
 namespace ProvaPub.Services
 {
@@ -29,7 +29,7 @@ namespace ProvaPub.Services
                 case "pix":
                     return await _provedorPagamentoPix.ProcessPaymentPix(paymentValue, customerId);
                     break;
-                case "creditcard":
+                case "credit":
                     return await _provedorPagamentoCredit.ProcessPaymentCredit(paymentValue, customerId);
                     break;
                 case "paypal":
