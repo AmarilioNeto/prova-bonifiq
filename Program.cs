@@ -3,6 +3,7 @@ using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services;
 using ProvaPub.Services.PaymentForm;
+using ProvaPub.Tests;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddScoped<IProvedorPagamentoPaypal, PaypalPayment>();
 builder.Services.AddScoped<IProvedorPagamentoCredit, CreditPayment>();
 builder.Services.AddScoped<IProvedorPagamentoPix, PixPayment>();
 builder.Services.AddScoped<OrderService>();
+
 
 builder.Services.AddDbContext<TestDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ctx")));
